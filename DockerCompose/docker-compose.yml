@@ -1,0 +1,20 @@
+version: '3'
+services:
+  webserver:
+    build: ./nginx
+    ports:
+        - "80:80"
+    volumes:
+        - data-volume:/var/www/html
+    depends_on:
+        - putconsul
+  putconsul:
+      build: ./putConsul
+      volumes:
+         - data-volume:/var/www/html
+      expose:
+          - "8888"
+
+volumes:
+    data-volume:
+    
