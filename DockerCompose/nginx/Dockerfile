@@ -1,4 +1,4 @@
-From alpine
+From johnzac92/ostest:test
 RUN apk add --no-cache nginx
 RUN mkdir -p /run/nginx
 COPY conf/* /etc/nginx/conf.d/
