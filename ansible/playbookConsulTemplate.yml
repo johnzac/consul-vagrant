@@ -1,0 +1,31 @@
+---
+- hosts: consulInstances
+  vars:
+      consulSource: /bin/consul
+      consulDestination: /bin/
+      localHomeDirectory: /home/john/
+      remoteHomeDirectory: /home/vagrant/
+      consulInitScriptSrc: /home/john/consul.conf
+      consulRegisterScriptSrc: /home/john/consul_register.conf
+
+  tasks:
+     - name: copying consul to remote hosts
+       copy:
+            src: "{{ consulSource }}"
+            dest: "{{ consulDestination }}"
+            mode: 0555
+       become: yes
+
+     - name: copying consul init-script
+       copy:
+           src: "{{ consulInitScriptSrc }}"
+           dest: /etc/init
+       become: yes
+     - name: copyting consul register script
+       copy: 
+           src: "{{ consulRegisterScriptSrc }}"
+           dest: /etc/init
+       become: yes  
+
+    
+

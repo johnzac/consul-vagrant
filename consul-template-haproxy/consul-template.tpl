@@ -11,6 +11,11 @@ defaults
         timeout server      30000ms
         timeout connect      3000ms
         retries 3
+frontend default1
+        bind 127.0.0.1:8123
+        default_backend bk_serverdefault
+backend bk_serverdefault
+        server defbkend 127.0.0.1:77 maxconn 2048
 {{ range services }}
 {{ if keyExists (print "expose_service/" .Name "/port") }}
 frontend {{ .Name }}
