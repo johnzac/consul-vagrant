@@ -1,31 +1,57 @@
 ---
-- hosts: consulInstances
+- hosts: vagrant
   vars:
-      consulSource: /bin/consul
-      consulDestination: /bin/
-      localHomeDirectory: /home/john/
-      remoteHomeDirectory: /home/vagrant/
-      consulInitScriptSrc: /home/john/consul.conf
-      consulRegisterScriptSrc: /home/john/consul_register.conf
+      consulTemplateSource: /bin/consul-template
+      consulTemplateDestination: /bin/
+      consulTemplateInitScriptSrc: /etc/ansible/templates/consul-template.conf
+      consulTemplateHaProxy: /etc/ansible/templates/consul-template.tpl 
+      consulTemplateConfiguration: /etc/ansible/templates/template.config
+      haproxyrestartscript: /etc/ansible/templates/restart-ha.sh 
+      localHomeDirectory: /home/owl/
+      remoteHomeDirectory: /home/vagrant
+      consulPidFile: /tmp/consulPid
+      haproxyPidFile: /tmp/haPid
+      haproxyConfigFile: /etc/haproxy/haproxy.cfg
 
   tasks:
-     - name: copying consul to remote hosts
+
+     - name: creating consul etc directory
+       file:
+           path: /etc/consul-template.d
+           state: directory
+       become: yes   
+     - name: copying consul-template to remote hosts
        copy:
-            src: "{{ consulSource }}"
-            dest: "{{ consulDestination }}"
+            src: "{{ consulTemplateSource }}"
+            dest: "{{ consulTemplateDestination }}"
             mode: 0555
        become: yes
 
-     - name: copying consul init-script
-       copy:
-           src: "{{ consulInitScriptSrc }}"
+     - name: copying consul-template init-script
+       template:
+           src: "{{ consulTemplateInitScriptSrc }}"
            dest: /etc/init
        become: yes
-     - name: copyting consul register script
+     - name: copying consul template for haproxy
        copy: 
-           src: "{{ consulRegisterScriptSrc }}"
-           dest: /etc/init
-       become: yes  
+           src: "{{ consulTemplateHaProxy }}"
+           dest: "{{ remoteHomeDirectory }}"
+       
+
+     - name: Copying consul configuration 
+       template:
+           src: "{{ consulTemplateConfiguration }}"
+           dest: /etc/consul-template.d
+       become: yes
+     - name: Copying Haproxy restart script
+       template:
+           src: "{{ haproxyrestartscript }}"
+           dest: "{{ remoteHomeDirectory }}"
+           mode: 0555
+      
+
+
+
 
     
 

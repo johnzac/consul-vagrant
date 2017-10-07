@@ -1,17 +1,12 @@
 ---
-- hosts: vagrant
+- hosts: consulInstances
   vars:
       consulSource: /bin/consul
       consulDestination: /bin/
       localHomeDirectory: /home/john/
       remoteHomeDirectory: /home/vagrant/
-      consulInitScriptSrc: /etc/ansible/templates/consul.conf
-      consulRegisterScriptSrc: /etc/ansible/templates/consul_register.conf
-      firstBootRegister: "{{ remoteHomeDirectory }}firstBoot"
-      getServersUrl: "192.168.100.1/servers2.json"
-      putServersUrl: "192.168.100.1/putServers"
-      dataCenter: "termnewsuswest"
-      bootstrap_expect: 3
+      consulInitScriptSrc: /home/john/consul.conf
+      consulRegisterScriptSrc: /home/john/consul_register.conf
 
   tasks:
      - name: copying consul to remote hosts
@@ -22,12 +17,12 @@
        become: yes
 
      - name: copying consul init-script
-       template:
+       copy:
            src: "{{ consulInitScriptSrc }}"
            dest: /etc/init
        become: yes
      - name: copyting consul register script
-       template: 
+       copy: 
            src: "{{ consulRegisterScriptSrc }}"
            dest: /etc/init
        become: yes  
