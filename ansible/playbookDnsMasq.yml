@@ -1,0 +1,32 @@
+ - hosts: vagrantServers
+   gather_facts: False
+   strategy: free
+ 
+   tasks:
+ 
+    - name: Installing python-apt for apt module
+      command: apt-get install python-apt -y -q
+      become: true
+    - name: Update cache
+      apt:
+         update_cache: yes
+      become: yes
+    - name: Install the package dnsmasq
+      apt:
+        name: dnsmasq
+        state: present
+      become: yes
+ 
+    - name: adding line to dnsmasq configuration
+      lineinfile:
+         path: /etc/dnsmasq.conf
+         line: 'addn-hosts=/home/vagrant/hosts.conf'
+      become: yes
+ 
+    - name: restart dnsmasquerade
+      service:
+          name: dnsmasq
+          state: restarted
+      become: yes
+ 
+     

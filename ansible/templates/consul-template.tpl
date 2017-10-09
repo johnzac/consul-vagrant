@@ -12,10 +12,11 @@ defaults
         timeout connect      3000ms
         retries 3
 frontend default1
-        bind 127.0.0.1:8899
+        bind 127.0.0.1:{{ exposePortHAProxy }}
         default_backend bk_serverdefault
 backend bk_serverdefault
-        server defbkend 127.0.0.1:77 maxconn 2048
+        server defbkend 127.0.0.1:{{ defaultHAProxyBackendPort }} maxconn 2048
+{%raw %}
 {{ range services }}
 {{ if keyExists (print "expose_service/" .Name "/port") }}
 frontend {{ .Name }}
@@ -25,3 +26,4 @@ backend {{ (print "bk_server" .Name) }}
 {{ range service .Name }}
         server {{ .Name }}{{ .Address }}{{ .Port }} {{ .Address }}:{{ .Port }} maxconn 2048
 {{ end }}{{ end }}{{end}}
+{% endraw %}
